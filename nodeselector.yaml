@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  selector:
+    matchLabels:
+      env: prod
+  replicas: 3
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        env: prod
+    spec:
+      containers:
+        - name: myapp-nginx
+          image: nginx
+      nodeSelector:
+        region:
+         useast-1
+
+# To execute the same we need to label the nodes and to label the nodes the coomands are below 
+# k label nodes node02 region=useast-1
+# to check labels kubectl get nodes --show-labels

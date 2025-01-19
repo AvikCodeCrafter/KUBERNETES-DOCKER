@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  selector:
+    matchLabels:
+      env: prod
+  replicas: 3
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        env: prod 
+    spec:
+      containers:
+        - name: myapp-nginx
+          image: nginx
+          ports:
+            - containerPort: 8080
+      tolerations:
+        - key: size
+          operator: Equals
+          value: large
+          effect: NoSchedule
+
+# To execute the same we need to taint the nodes and to taint the nodes the coomands are below 
+# k taint nodes node02 size=small:NoExecute
+# k taint nodes node01 size=large:NoSchedule
+# to check if taint is applied  - k describe nodes node01 | grep -i taint
+# to untaint kubectl taint nodes node01 size-
