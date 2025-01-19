@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: elasticsearch
+  namespace: kube-system
+  labels:
+    app: elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app: Logging
+  template:
+    metadata:
+      name: elasticsearch
+      labels:
+        app: Logging
+    spec:
+      containers:
+        - name: fluentd-elasticsearch
+          image: registry.k8s.io/fluentd-elasticsearch:1.20
+
+# To create damemon set use normal apply or create command
+# to check for Damemonset use the command  k get ds --all-namespaces or kubectl get damemonset --all-namespaces      
