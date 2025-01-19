@@ -13,3 +13,20 @@ spec:
     min:
       cpu: 100m
     type: Container
+
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-resource-constraint
+spec:
+  limits:
+  - default: # this section defines default limits
+      memory: 256Mi
+    defaultRequest: # this section defines default requests
+      memory: 256Mi
+    max: # max and min define the limit range
+      memory: "1G"
+    min:
+      memory: "128Mi"
+    type: Container
