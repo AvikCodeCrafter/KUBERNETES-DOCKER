@@ -20,4 +20,22 @@ spec:
           image: registry.k8s.io/fluentd-elasticsearch:1.20
 
 # To create damemon set use normal apply or create command
-# to check for Damemonset use the command  k get ds --all-namespaces or kubectl get damemonset --all-namespaces or k get ds -A     
+# to check for Damemonset use the command  k get ds --all-namespaces or kubectl get damemonset --all-namespaces or k get ds -A    
+
+
+--- 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-color
+spec:
+  containers:
+    - name: webapp-color
+      image: kodekloud/webapp-color
+      env:
+        - name: APP_COLOR
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config-map
+              key: APP_COLOR
