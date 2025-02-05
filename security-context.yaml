@@ -20,3 +20,9 @@ spec:
       mountPath: /data/demo
     securityContext:
       allowPrivilegeEscalation: false
+      capabilities:
+       add: ["NET_ADMIN", "SYS_TIME"]
+
+
+# To check with user the pod or container is running use the command\
+# kubectl exec -it myapp -- whoami
