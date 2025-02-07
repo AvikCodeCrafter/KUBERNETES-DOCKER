@@ -11,5 +11,3 @@ spec:
       command:
         - sleep
         - "1000"
-
-        
