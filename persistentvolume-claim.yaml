@@ -8,7 +8,35 @@ spec:
   resources:
     requests:
       storage: 50Mi
-  selector:
-    matchLabels:
-      
 
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+  storageClassName: local-storage #you get get that using > k get storageclass
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      volumeMounts:
+        - mountPath: /var/www/html
+          name: pv-storage
+  volumes:
+    - name: pv-storage
+      persistentVolumeClaim:
+        claimName: local-pvc
