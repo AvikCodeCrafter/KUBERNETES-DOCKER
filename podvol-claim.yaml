@@ -12,11 +12,9 @@ spec:
     volumeMounts:
     - mountPath: /log
       name: log-volume
-
   volumes:
-  - name: log-volume
-    hostPath:
-      # directory location on host
-      path: /var/log/webapp
-      # this field is optional
-      type: Directory
+    - name: log-volume
+      persistentVolumeClaim:
+        claimName: claim-log-1
+
+        
