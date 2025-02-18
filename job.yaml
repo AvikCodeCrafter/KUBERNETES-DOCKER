@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-job
+  namespace: default
+spec:
+  completions: 1  # no of time you want to run 
+  parallelism: 1  #no of pods you want to run 
+  template:
+    metadata:
+      name: demo-job-pod
+      labels:
+        app: batch-task
+    spec:
+      containers:
+        - name: batch-container
+          image: busybox
+          command: ["sh", "-c", "echo Hi Momo && sleep 500"]
+      restartPolicy: Never
+
+# To get list of jobs > kubectl get job also check pod to see if the job is still running > kubectl get pods or po
+

@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minute-backup
+  namespace: default
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 60
+  jobTemplate: 
+    spec:
+      template:
+        metadata:
+          labels:
+            app: minute-backup
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup-container
+              image: busybox
+              command:
+                - "sh"
+                - "-c"
+                - > 
+                  echo "Backup Started"; 
+                  mkdir -p /backup;
+                  mkdir -p /data;
+                  cp -r /data/* /backup/;
+                  echo "Backup Completed";
+              volumeMounts:
+                - mountPath: /data
+                  name: data-volume
+                - mountPath: /backup
+                  name: backup-volume
+          volumes:
+            - name: data-volume
+              hostPath:
+                path: /data
+                type: DirectoryOrCreate
+            - name: backup-volume
+              hostPath:
+                path: /backup
+                type: DirectoryOrCreate    
+
+# To see list of Cron Job - > kubectl get cronjob or k get cj 
