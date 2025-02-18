@@ -5,8 +5,8 @@ metadata:
   namespace: default
 spec:
   schedule: "* * * * *"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 60
+  concurrencyPolicy: Forbid            # To avoid overlapping jobs
+  startingDeadlineSeconds: 60          # to prevent indefinitely hanging jobs
   jobTemplate: 
     spec:
       template:
