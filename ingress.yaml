@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-notes-ingress
+spec:
+  ingressClassName: nginx  # Add this if using an NGINX Ingress Controller
+  rules:
+    - http:
+        paths:
+          - path: /nginx
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp-service
+                port:
+                  number: 8000
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-app-service
+                port: 
+                  number: 8000
