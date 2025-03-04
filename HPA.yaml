@@ -1,0 +1,98 @@
+# Simple HPA
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app             # This HPA scales the my-app deployment.
+  minReplicas: 2
+  maxReplicas: 10            # It ensures a minimum of 2 replicas and a maximum of 10.
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource               # It scales based on CPU (50% utilization) and Memory (70% utilization).
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+---
+
+# Complex HPA
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+  namespace: my-namespace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1      # Targeting a Kubernetes Deployment
+    kind: Deployment
+    name: my-app             # This HPA will scale the "my-app" deployment
+  minReplicas: 3             # The minimum number of pods to run
+  maxReplicas: 50            # The maximum number of pods allowed
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60  # Scale when CPU usage exceeds 60%
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: AverageValue
+          averageValue: 500Mi         # Scale when memory usage exceeds 500Mi
+    - type: Pods
+      pods:
+        metric:
+          name: requests_per_second    # Custom metric from a service
+        target:
+          type: AverageValue
+          averageValue: "1000"         # Scale when RPS per pod > 1000
+    - type: Object
+      object:
+        metric:
+          name: custom_latency_seconds  # External metric (e.g., from Prometheus)
+        describedObject:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          name: my-app-ingress          # Monitoring latency at the Ingress level
+        target:
+          type: Value
+          value: "0.2"                  # Scale if request latency exceeds 0.2 seconds
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30  # Prevents scaling up too frequently
+      policies:
+        - type: Percent
+          value: 20                   # Increase pods by 20%
+          periodSeconds: 15           # Every 15 seconds
+        - type: Pods
+          value: 5                   # Or add 5 pods at a time
+          periodSeconds: 15
+      selectPolicy: Max              # Use the more aggressive scaling policy
+    scaleDown:
+      stabilizationWindowSeconds: 60  # Prevents rapid scale downs
+      policies:
+        - type: Percent
+          value: 10                   # Decrease pods by 10%
+          periodSeconds: 30
+        - type: Pods
+          value: 2                    # Or remove 2 pods at a time
+          periodSeconds: 30
+      selectPolicy: Min               # Use the slower scaling policy
+
+---
